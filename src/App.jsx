@@ -105,11 +105,11 @@ function App() {
         <div className="flex flex-col items-center justify-center">
           {currentStep === 0 && (
             <div className="w-full text-center space-y-6 sm:space-y-8">
-              <h1 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-6 text-white/90 leading-tight sm:leading-relaxed">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
                 It's that time of year again!
               </h1>
               <p className="text-base sm:text-xl text-gray-300">
-                They crunched the numbers, but why stop there?
+                They crunched the numbers (or whatever) but why stop there?
               </p>
               <button
                 onClick={() => setCurrentStep(1)}
@@ -123,7 +123,7 @@ function App() {
           {currentStep === 1 && (
             <div className="w-full text-center space-y-8">
               <h1 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
-                How much of your subscription did your #1 artist receive?
+                How much of your annual subscription did your #1 artist receive?
               </h1>
               <p className="text-lg sm:text-xl text-gray-300">
                 Enter your total minutes listened this year to find out!
@@ -220,34 +220,42 @@ function App() {
                 {/* Direct support model */}
                 <div className="p-4 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
                   <p className="text-white mb-1 sm:mb-2">With a direct support model, your #1 artist would have received</p>
-                  <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 px-2 sm:px-4 py-1 sm:py-2 rounded-lg [text-shadow:_0_1px_3px_rgb(0_0_0_/_40%)] bg-black/40">
-                    ${results.directSupportEarnings}
-                  </p>
-                  <p className="text-gray-400 mt-4">
-                    That's <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">{results.earningsMultiplier}x</span> more!
-                  </p>
-                </div>
-
-                <div className="p-4 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
-                  <p className="text-white mb-6">Your yearly Spotify subscription could have paid for</p>
-                  
-                  <div className="space-y-4">
-                    <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
-                      {results.potentialAlbums} full albums
+                  <div className="flex items-baseline gap-0.5">
+                    <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 px-2 sm:px-4 py-1 sm:py-2 rounded-lg [text-shadow:_0_1px_3px_rgb(0_0_0_/_40%)] bg-black/40">
+                      ${results.directSupportEarnings}
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
-                      {results.potentialConcerts} concert tickets
+                    <p className="text-gray-400">
+                      That's <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">{results.earningsMultiplier}x</span> more!
                     </p>
                   </div>
+                </div>
+
+                <div className="p-3 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
+                  <p className="text-white text-sm sm:text-base mb-4">Your yearly Spotify subscription could have paid for</p>
                   
-                  <div className="mt-8">
-                    <p className="text-gray-400 mb-6">or</p>
+                  <div className="space-y-2">
+                    <p className="text-lg sm:text-2xl">
+                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
+                        {results.potentialAlbums}
+                      </span>
+                      <span className="text-white"> full albums</span>
+                    </p>
+                    <p className="text-lg sm:text-2xl">
+                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
+                        {results.potentialConcerts}
+                      </span>
+                      <span className="text-white"> concert tickets</span>
+                    </p>
+                  </div>
+
+                  <div className="mt-3">
+                    <p className="text-gray-400 mb-3">or</p>
                     
-                    <p className="text-white mb-4">You could've listened to your top song for</p>
-                    <p className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 mb-2">
+                    <p className="text-white text-sm sm:text-base mb-2">You could've listened to your top song for</p>
+                    <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 mb-1">
                       {results.maxListeningHours} hours straight
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-400">
                       ({results.listeningTimePercentage}% of your total listening time)
                     </p>
                   </div>
