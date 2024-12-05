@@ -126,7 +126,7 @@ function App() {
                 How much of your annual subscription did your #1 artist receive?
               </h1>
               <p className="text-lg sm:text-xl text-gray-300">
-                Enter your total minutes listened this year to find out!
+                Enter your minutes listened for 2024 to find out!
               </p>
 
               <div className="w-full max-w-2xl mx-auto bg-black/30 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-xl">
@@ -231,20 +231,14 @@ function App() {
                 </div>
 
                 <div className="p-3 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
-                  <p className="text-white text-sm sm:text-base mb-4">Your yearly Spotify subscription could have paid for</p>
+                  <p className="text-white mb-4">Your yearly Spotify subscription could have paid for</p>
                   
                   <div className="space-y-2">
-                    <p className="text-lg sm:text-2xl">
-                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
-                        {results.potentialAlbums}
-                      </span>
-                      <span className="text-white"> full albums</span>
+                    <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
+                      {results.potentialAlbums} full albums
                     </p>
-                    <p className="text-lg sm:text-2xl">
-                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
-                        {results.potentialConcerts}
-                      </span>
-                      <span className="text-white"> concert tickets</span>
+                    <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
+                      {results.potentialConcerts} concert tickets
                     </p>
                   </div>
 
