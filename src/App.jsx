@@ -1,12 +1,26 @@
 // src/App.jsx
 import React, { useState } from 'react';
 import './index.css';
+import trLogo from '/Asset 1.svg'
+
+// Update Logo component with higher z-index and better positioning
+const Logo = () => (
+  <a 
+    href="https://www.tabularasarecords.com"
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="block w-7 h-7 fixed bottom-4 left-1/2 -translate-x-1/2 hover:opacity-80 transition-opacity -z-50"
+  >
+    <img src={trLogo} alt="Tabula Rasa Logo" className="w-full h-full" />
+  </a>
+);
 
 function App() {
   const [minutesListened, setMinutesListened] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const [results, setResults] = useState(null);
   const [copyStatus, setCopyStatus] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,73 +29,71 @@ function App() {
     setCurrentStep(2);
   };
 
+  // Update performCalculations function
   const performCalculations = (minutes) => {
-    const totalStreams = minutes / 3.5;
-    const perStreamRate = 0.004;
-    const totalPayout = totalStreams * perStreamRate;
-    const weights = [0.4, 0.25, 0.15, 0.11, 0.09]; // Previously [0.4, 0.25, 0.15, 0.1, 0.1]
+    // Yearly subscription amount
+    const yearlySubscription = 143.88;
+
+    // Current pro-rata streaming rates
+    const subscriptionStreamRate = 0.004;
+    const directSupportStreamRate = 0.01;
+
+    // Total streams your subscription could cover
+    const totalStreamsFromSubscription = yearlySubscription / subscriptionStreamRate;
+
+    // Total minutes these streams represent (assuming 3.1-minute songs)
+    const totalMinutesFromSubscription = totalStreamsFromSubscription * 3.1;
+
+    // Total hours (this is what your subscription could pay for)
+    const totalHoursFromSubscription = totalMinutesFromSubscription / 60;
+
+    // Format the hours to one decimal place
+    const potentialArtistHireHours = totalHoursFromSubscription.toFixed(1);
+
+    // Calculate earnings for user's actual minutes listened
+    const totalStreams = minutes / 3.1;
+    const totalPayout = totalStreams * subscriptionStreamRate;
+    
+    // Artist earnings calculations  
+    const weights = [0.4, 0.25, 0.15, 0.11, 0.09];
     const majorLabelEarnings = weights.map((weight) =>
       (totalPayout * weight * 0.2).toFixed(2)
     );
 
-    const items = [
-      { name: 'Chipotle Burritos', price: 8.5 },
-      { name: 'Snickers Bars', price: 1.5 },
-      { name: 'Bottles of Premium Water', price: 2.0 },
-      { name: 'Erewhon Smoothies', price: 22.0 },
-      { name: 'Boxes of Band-Aids', price: 3.0 },
-      { name: 'Non-Electric Scooters', price: 150.0 },
-      { name: 'Years of Spotify Premium', price: 143.88 },
-      { name: 'Gallons of Gas', price: 4.0 },
-      { name: 'Packs of Guitar Strings', price: 12.0 },
-      { name: 'Cups of Artisan Coffee', price: 5.0 },
-      { name: 'Boxes of Macarons', price: 18.0 },
-      { name: 'Vinyl Records', price: 25.0 },
-      { name: 'Pairs of Studio Headphones', price: 120.0 },
-      { name: 'Months of Netflix', price: 15.49 },
-      { name: 'Packs of Instant Ramen', price: 10.0 },
-      { name: 'Movie Tickets', price: 14.0 }
-    ];
+    // Direct support model
+    const directTotalPayout = totalStreams * directSupportStreamRate;
+    const directSupportEarnings = (directTotalPayout * 0.8).toFixed(2);
 
+    // Earnings multiplier
+    const earningsMultiplier = (directSupportEarnings / majorLabelEarnings[0]).toFixed(1);
+
+    // Random item calculation
+    const items = [
+      { name: 'cups of coffee', price: 3 },
+      { name: 'guitar strings', price: 10 },
+      { name: 'vinyl records', price: 25 },
+      { name: 'tickets to a concert', price: 20 },
+    ];
     const randomItem = items[Math.floor(Math.random() * items.length)];
     const majorLabelItemAmount = (majorLabelEarnings[0] / randomItem.price).toFixed(2);
 
-    // Calculate direct support model earnings
-    const directSupportEarnings = (totalPayout * 0.8).toFixed(2);
-    const earningsMultiplier = (directSupportEarnings / majorLabelEarnings[0]).toFixed(1);
-
-    const yearlySubscription = 143.88; // Spotify yearly cost
-    const albumPrice = 10;
-    const concertPrice = 15;
+    // Add album and concert calculations (example values - adjust as needed)
+    const potentialAlbums = Math.floor(yearlySubscription / 10); // Assuming $10 per album
+    const potentialConcerts = Math.floor(yearlySubscription / 15); // Assuming $15 per ticket
     
-    const potentialAlbums = Math.floor(yearlySubscription / albumPrice);
-    const potentialConcerts = Math.floor(yearlySubscription / concertPrice);
-    const perSongDirectSupport = 0.80; // 80% of a $1 song purchase
-    const potentialSongPlays = Math.floor(yearlySubscription / perSongDirectSupport);
-    const avgSongLength = 3.1; // minutes
-    const potentialListeningTime = Math.floor(potentialSongPlays * avgSongLength);
-
-    // Calculate max streams if full subscription went to one artist
-    const maxStreams = Math.floor(yearlySubscription / perStreamRate);
-    const maxListeningMinutes = maxStreams * avgSongLength;
-    const maxListeningHours = Math.floor(maxListeningMinutes / 60);
-
-    // Calculate percentage of total listening time
-    const totalListeningHours = minutes / 60;
-    const listeningTimePercentage = Math.round((maxListeningHours / totalListeningHours) * 100);
+    // Calculate work days
+    const workDays = (potentialArtistHireHours / 8).toFixed(1);
 
     return {
       majorLabelEarnings,
-      randomItem,
-      majorLabelItemAmount,
       directSupportEarnings,
       earningsMultiplier,
+      potentialArtistHireHours,
+      randomItem,
+      majorLabelItemAmount,
       potentialAlbums,
       potentialConcerts,
-      potentialSongPlays,
-      potentialListeningTime,
-      maxListeningHours,
-      listeningTimePercentage
+      workDays,
     };
   };
 
@@ -99,17 +111,56 @@ function App() {
   // Common button classes
   const buttonClasses = "px-6 sm:px-8 py-3 sm:py-4 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold border border-transparent bg-clip-padding hover:opacity-90 transition-all duration-300 text-sm sm:text-base";
 
+  // Update existing AssumptionsModal to handle different content based on type
+  const AssumptionsModal = ({ onClose, type = 'current' }) => (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-black/90 rounded-xl p-6 max-w-lg w-full border border-gray-800/50 shadow-xl">
+        <h3 className="text-xl font-bold text-white mb-4">How we calculated this:</h3>
+        <ul className="space-y-3 text-gray-300 mb-6">
+          {type === 'current' ? (
+            <>
+              
+              <li>• All dollar amounts US</li>
+              <li>• Streaming services pay about $0.004 per stream</li>
+              <li>• Artists get about 20% of their portion</li>
+              <li>• Your top artist gets about 40% of your streams</li>
+              <li>• The next 4 artists get 25%, 15%, 11%, and 9%</li>
+              <li>• Assuming 100% of streams go to your top 5 artists <span className="text-[0.9em]">(otherwise we'd end up with a bunch of $0.00 results, which is more accurate but boring & worse)</span></li>
+            </>
+          ) : (
+            <>
+              <li>• All dollar amounts US</li>
+              <li>• Average song length: 3.1 minutes</li>
+              <li>• Direct support pays $0.01 per stream</li>
+              <li>• Artists get 80% of each stream</li>
+              <li>• 20% platform share for operating costs</li>
+              <li>• For this number we assume no label or intermediary <span className="text-[0.9em]">(even if there was a label cut it would still be over a 10x increase)</span></li>
+            </>
+          )}
+        </ul>
+        <button 
+          onClick={onClose}
+          className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold hover:opacity-90 transition-all"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-b from-[#001a15] to-[#03c463] flex items-center justify-center overflow-x-hidden px-4 py-6 sm:py-8">
+    <div className="relative min-h-screen w-screen bg-gradient-to-b from-[#001a15] to-[#03c463] flex items-center justify-center overflow-x-hidden px-3 py-3 sm:px-4 sm:py-8">
+      <Logo /> {/* Move Logo here, at root level */}
       <div className="w-full max-w-4xl mx-auto">
         <div className="flex flex-col items-center justify-center">
           {currentStep === 0 && (
-            <div className="w-full text-center space-y-6 sm:space-y-8">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
+            // Step 0
+            <div className="w-full text-center space-y-4 sm:space-y-8">
+              <h1 className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
                 It's that time of year again!
               </h1>
               <p className="text-base sm:text-xl text-gray-300">
-                They crunched the numbers (or whatever) but why stop there?
+                They crunched the numbers <span className="text-[0.7em]">or whatever</span> but why stop there?
               </p>
               <button
                 onClick={() => setCurrentStep(1)}
@@ -121,15 +172,16 @@ function App() {
           )}
 
           {currentStep === 1 && (
-            <div className="w-full text-center space-y-8">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
-                How much of your annual subscription did your #1 artist receive?
+            // Step 1
+            <div className="w-full text-center space-y-4 sm:space-y-8">
+              <h1 className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
+                How much of your subscription did your #1 artist receive?
               </h1>
-              <p className="text-lg sm:text-xl text-gray-300">
+              <p className="text-base sm:text-xl text-gray-300">
                 Enter your minutes listened for 2024 to find out!
               </p>
 
-              <div className="w-full max-w-2xl mx-auto bg-black/30 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-xl">
+              <div className="w-full max-w-2xl mx-auto bg-black/30 backdrop-blur-sm rounded-2xl p-4 sm:p-8 shadow-xl">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-white text-lg mb-2">Minutes Listened</label>
@@ -160,12 +212,27 @@ function App() {
                 Based on your listening habits...
               </h2>
               
-              <div className="w-full bg-black/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 pb-20 sm:pb-24 relative">
+              {/* Step 2 */}
+              <div className="w-full bg-black/30 backdrop-blur-sm rounded-2xl p-3 sm:p-6 shadow-xl space-y-3 sm:space-y-6 pb-16 sm:pb-24 relative">
                 {/* Highlight top artist */}
-                <div className="p-3 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
-                  <p className="text-white mb-1 sm:mb-2">Your #1 Artist Received</p>
-                  <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-green-400 px-2 sm:px-4 py-1 sm:py-2 rounded-lg [text-shadow:_0_1px_3px_rgb(0_0_0_/_40%)] bg-black/40">
+                <div className="p-2 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
+                  <p className="text-sm sm:text-base text-white mb-1 sm:mb-2">Your #1 Artist Received</p>
+                  <p 
+                    onClick={() => setShowModal(true)}
+                    className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-green-400 px-2 sm:px-4 py-1 sm:py-2 rounded-lg [text-shadow:_0_1px_3px_rgb(0_0_0_/_40%)] bg-black/40 cursor-pointer hover:opacity-90"
+                  >
                     ${results.majorLabelEarnings[0]}
+                  </p>
+                </div>
+
+                {/* Comparison text in centered container */}
+                <div className="text-center">
+                  <p className="inline-block text-base sm:text-lg text-white mb-2 sm:mb-3 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-black/40">
+                    Your top artist could buy approximately{' '}
+                    <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-green-400">
+                      {results.majorLabelItemAmount}
+                    </span>{' '}
+                    <span className="text-gray-200">{results.randomItem.name}</span>
                   </p>
                 </div>
 
@@ -184,22 +251,17 @@ function App() {
                   </div>
                 </div>
 
-                <div className="text-center">
-                  <p className="text-base sm:text-lg text-white mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-black/40 inline-block">
-                    Your top artist could buy approximately{' '}
-                    <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-green-400">
-                      {results.majorLabelItemAmount}
-                    </span>{' '}
-                    <span className="text-gray-200">{results.randomItem.name}</span>!
-                  </p>
-                </div>
-
+                {/* Bottom text */}
+                <p className="text-xs sm:text-sm text-gray-400 text-center py-2 sm:py-4">
+                  Where did the rest of your money go?
+                </p>
                 <button
                   onClick={() => setCurrentStep(1)}
                   className={`fixed bottom-4 sm:bottom-8 left-4 sm:left-8 ${buttonClasses}`}
                 >
-                  Calculate Again
+                  Back
                 </button>
+                
                 <button
                   onClick={() => setCurrentStep(3)}
                   className={`fixed bottom-4 sm:bottom-8 right-4 sm:right-8 ${buttonClasses}`}
@@ -213,15 +275,21 @@ function App() {
           {currentStep === 3 && results && (
             <>
               <h2 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
-                It doesn't have to be this way
+                It doesn't have to be this way...
               </h2>
               
-              <div className="w-full bg-black/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 pb-24 sm:pb-32 relative">
-                {/* Direct support model */}
-                <div className="p-4 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
-                  <p className="text-white mb-1 sm:mb-2">With a direct support model, your #1 artist would have received</p>
+              <div className="w-full bg-black/30 backdrop-blur-sm rounded-2xl p-3 sm:p-6 shadow-xl space-y-3 sm:space-y-6 pb-24 sm:pb-32 relative">
+                
+                {/* Direct support model section */}
+                <div className="p-2 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
+                  <p className="text-sm sm:text-base text-white mb-1 sm:mb-2">
+                    With a direct support model your top artist would've received
+                  </p>
                   <div className="flex items-baseline gap-0.5">
-                    <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 px-2 sm:px-4 py-1 sm:py-2 rounded-lg [text-shadow:_0_1px_3px_rgb(0_0_0_/_40%)] bg-black/40">
+                    <p 
+                      onClick={() => setShowModal(true)}
+                      className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 px-2 sm:px-4 py-1 sm:py-2 rounded-lg [text-shadow:_0_1px_3px_rgb(0_0_0_/_40%)] bg-black/40 cursor-pointer hover:opacity-90"
+                    >
                       ${results.directSupportEarnings}
                     </p>
                     <p className="text-gray-400">
@@ -230,9 +298,11 @@ function App() {
                   </div>
                 </div>
 
-                <div className="p-3 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
-                  <p className="text-white mb-4">Your yearly Spotify subscription could have paid for</p>
-                  
+                {/* Subscription comparisons section */}
+                <div className="p-4 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
+                  <p className="text-lg sm:text-xl text-white mb-4">
+                    Your yearly Spotify subscription could have paid for
+                  </p>
                   <div className="space-y-2">
                     <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
                       {results.potentialAlbums} full albums
@@ -240,23 +310,119 @@ function App() {
                     <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
                       {results.potentialConcerts} concert tickets
                     </p>
-                  </div>
 
-                  <div className="mt-3">
-                    <p className="text-gray-400 mb-3">or</p>
+                    {/* Add grey text */}
+                    <p className="text-base sm:text-lg text-gray-300 mt-4">
+                      Or, with the current pro-rata streaming model and your annual subscription amount, you could have "hired" your favorite artist for
+                    </p>
                     
-                    <p className="text-white text-sm sm:text-base mb-2">You could've listened to your top song for</p>
-                    <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 mb-1">
-                      {results.maxListeningHours} hours straight
+                    {/* Display updated hours with gradient style */}
+                    <div className="space-y-2">
+                      <p className="text-lg sm:text-2xl">
+                        <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
+                          {results.potentialArtistHireHours} hours
+                        </span>
+                        <span className="text-white mx-2">or</span>
+                        <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-yellow-400 to-green-400">
+                          {results.workDays} full work days
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Buttons Section */}
+                <button
+                  onClick={() => setCurrentStep(2)}
+                  className={`fixed bottom-4 sm:bottom-8 left-4 sm:left-8 ${buttonClasses}`}
+                >
+                  Back
+                </button>
+                
+                <button
+                  onClick={() => setCurrentStep(4)}
+                  className={`fixed bottom-4 sm:bottom-8 right-4 sm:right-8 ${buttonClasses}`}
+                >
+                  Continue
+                </button>
+              </div>
+            </>
+          )}
+
+          {currentStep === 4 && (
+            <>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500 leading-tight sm:leading-relaxed">
+                As we build the future of music, here are some ways you can support artists more directly
+              </h2>
+              
+              <div className="w-full bg-black/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 pb-24 sm:pb-32 relative">
+                <div className="p-4 sm:p-6 rounded-xl bg-black/50 border border-gray-800/50">
+                  <div className="space-y-4">
+                    <p className="text-lg sm:text-xl text-white mb-6">
+                      Consider merch, & digital or physical copies of your favorite records, where more of your purchase goes straight to the artist.
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-400">
-                      ({results.listeningTimePercentage}% of your total listening time)
-                    </p>
+                    
+                    {/* Recommended Services */}
+                    <div className="space-y-3">
+                      <a 
+                        href="https://drop.audio" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-green-400 hover:opacity-80 transition-opacity"
+                      >
+                        drop.audio
+                      </a>
+                      <a 
+                        href="https://bandcamp.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 hover:opacity-80 transition-opacity"
+                      >
+                        bandcamp.com
+                      </a>
+                      <a 
+                        href="https://www.ninaprotocol.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-blue-400 to-indigo-400 hover:opacity-80 transition-opacity"
+                      >
+                        ninaprotocol.com
+                      </a>
+                      <a 
+                        href="https://www.deezer.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-red-400 hover:opacity-80 transition-opacity"
+                      >
+                        deezer.com
+                      </a>
+                      <a 
+                        href="https://supercollector.xyz" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 hover:opacity-80 transition-opacity"
+                      >
+                        supercollector.xyz
+                      </a>
+                    </div>
                   </div>
                 </div>
 
+                <p className="text-center text-white">
+                  Warped Streams is a{' '}
+                  <a 
+                    href="https://www.tabularasarecords.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-green-400 hover:opacity-80 transition-opacity"
+                  >
+                    Tabula Rasa
+                  </a>
+                  {' '}project
+                </p>
+
                 <button
-                  onClick={() => setCurrentStep(2)}
+                  onClick={() => setCurrentStep(3)}
                   className={`fixed bottom-4 sm:bottom-8 left-4 sm:left-8 ${buttonClasses}`}
                 >
                   Back
@@ -273,6 +439,7 @@ function App() {
           )}
         </div>
       </div>
+      {showModal && <AssumptionsModal onClose={() => setShowModal(false)} type={currentStep === 3 ? 'direct' : 'current'} />}
     </div>
   );
 }
